@@ -1,39 +1,28 @@
-import { useState } from 'react'
-import { Form, Button, Alert, Container, Card } from 'react-bootstrap'
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react';
+import { Form, Button, Alert, Container, Card } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { register } from './Api';
 
 export default function Register() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
-  const navigate = useNavigate()
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError('');
     
     try {
-      const role = 'Administrator'
-      const response = await axios.post('https://localhost:7111/api/authentication', {
-        name,
-        email,
-        password,
-        role
-      },{
-        headers: {
-          'Content-Type': 'application/json',
-        },})
-      if (response.status == 201) {
-        setSuccess(true)
-        setTimeout(() => navigate('/'), 2000)
-      }
+      await register(name, email, password);
+      setSuccess(true);
+      setTimeout(() => navigate('/'), 2000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed')
+      setError(err.response?.data?.message || 'Registration failed');
     }
-  }
+  };
 
   return (
     <Container className="min-vh-100 d-flex align-items-center justify-content-center">
@@ -96,5 +85,5 @@ export default function Register() {
         </Card.Body>
       </Card>
     </Container>
-  )
+  );
 }

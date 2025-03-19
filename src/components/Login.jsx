@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Form, Button, Alert, Container, Card } from 'react-bootstrap';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { login } from './Api';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -12,23 +12,11 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        'https://localhost:7111/api/authentication/login',
-        {
-          email: email,
-          password: password,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      localStorage.setItem('accessToken', response.data.accessToken);
+      const { accessToken } = await login(email, password);
+      localStorage.setItem('accessToken', accessToken);
       navigate('/users');
     } catch (err) {
       if (err.response) {
-        console.log(err.response)
         if (err.response.status === 403) {
           setError('Your account is blocked');
         } else {

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Table, Button, ButtonGroup, Form } from 'react-bootstrap';
 import { FaUnlock, FaTrash } from 'react-icons/fa';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { fetchUsers, deleteUser, blockUser, unblockUser } from './Api';
 
 export default function UsersTable() {
   const [orderBy, setOrderBy] = useState('Email');
@@ -12,13 +12,10 @@ export default function UsersTable() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('https://localhost:7111/api/users', {
-          params: { OrderBy: orderBy },
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setUsers(response.data);
+        const data = await fetchUsers(token, orderBy);
+        setUsers(data);
       } catch (err) {
         if (err.response && err.response.status === 401) {
           localStorage.removeItem('accessToken');
@@ -28,7 +25,7 @@ export default function UsersTable() {
         }
       }
     };
-    fetchUsers();
+    fetchData();
   }, [token, navigate, orderBy]);
 
   const handleSort = (field) => {
@@ -77,39 +74,28 @@ export default function UsersTable() {
   
       for (const user of otherUsers) {
         if (action === 'delete') {
-          await axios.delete(`https://localhost:7111/api/users/${user.email}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+          await deleteUser(token, user.email);
         } else {
-          await axios.post(`https://localhost:7111/api/users/${action}/${user.email}`, {}, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+          await (action === 'block' ? blockUser : unblockUser)(token, user.email);
         }
       }
   
       if (currentUser) {
         if (action === 'delete') {
-          await axios.delete(`https://localhost:7111/api/users/${currentUser.email}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+          await deleteUser(token, currentUser.email);
           localStorage.removeItem('accessToken');
           navigate('/register');
           return;
         } else if (action === 'block') {
-          await axios.post(`https://localhost:7111/api/users/block/${currentUser.email}`, {}, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+          await blockUser(token, currentUser.email);
           localStorage.removeItem('accessToken');
           navigate('/register');
           return;
         }
       }
   
-      const response = await axios.get('https://localhost:7111/api/users', {
-        params: { OrderBy: orderBy },
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setUsers(response.data);
+      const data = await fetchUsers(token, orderBy);
+      setUsers(data);
   
     } catch (err) {
       if (err.response?.status === 401) {
