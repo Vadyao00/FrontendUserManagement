@@ -121,46 +121,48 @@ export default function UsersTable() {
         </Button>
       </div>
 
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>
-              <Form.Check 
-                type="checkbox" 
-                checked={selectedIds.length === users.length}
-                onChange={handleSelectAll}
-              />
-            </th>
-            <th>Name</th>
-            <th>
-              <Button variant="info" onClick={() => handleSort('Email')}>
-                Email
-              </Button>
-            </th>
-            <th>Registration Date</th>
-            <th>Last Login</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map(user => (
-            <tr key={user.id}>
-              <td>
+      <div style={{ overflowX: 'auto' }}>
+        <Table striped bordered hover style={{ minWidth: '600px' }}>
+          <thead>
+            <tr>
+              <th>
                 <Form.Check 
-                  type="checkbox"
-                  checked={selectedIds.includes(user.id)}
-                  onChange={() => handleSelectSingle(user.id)}
+                  type="checkbox" 
+                  checked={selectedIds.length === users.length}
+                  onChange={handleSelectAll}
                 />
-              </td>
-              <td>{user.name}</td>
-              <td>{user.email}</td>
-              <td>{new Date(user.registrationTime).toLocaleDateString()}</td>
-              <td>{new Date(user.lastLogin).toLocaleString()}</td>
-              <td>{user.status}</td>
+              </th>
+              <th>Name</th>
+              <th>
+                <Button variant="info" onClick={() => handleSort('Email')}>
+                  Email
+                </Button>
+              </th>
+              <th>Registration Date</th>
+              <th>Last Login</th>
+              <th>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {users.map(user => (
+              <tr key={user.id}>
+                <td>
+                  <Form.Check 
+                    type="checkbox"
+                    checked={selectedIds.includes(user.id)}
+                    onChange={() => handleSelectSingle(user.id)}
+                  />
+                </td>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{new Date(user.registrationTime).toLocaleDateString()}</td>
+                <td>{new Date(user.lastLogin).toLocaleString()}</td>
+                <td>{user.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
     </div>
   );
 }
