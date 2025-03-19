@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://usermanagementtask4.runasp.net/api';
+const API_BASE_URL = 'https://usermanagementtask4.runasp.net/api';
 
 export const login = async (email, password) => {
   try {
